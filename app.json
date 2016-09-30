@@ -1,0 +1,93 @@
+{
+    "id": "com.cyclone-software.fbcallmonitor",
+    "name": {
+        "en": "FritzBox CallMonitor",
+        "nl": "FritzBox Telefoon Monitor"
+    },
+    "version": "0.0.1",
+    "compatibility": ">=0.8.30",
+    "category": "internet",
+    "author": {
+        "name": "Marcel Timmermans",
+        "email": "marcel@timmermans.us"
+    },
+    "images": {
+        "large": "assets/images/large.jpg",
+        "small": "assets/images/small.jpg"
+    },
+    "permissions": [
+    ],
+    "flow": {
+        "triggers": [
+                {
+                    "id": "fb_incomming_call",
+                    "title": {
+                        "en": "Incomming call",
+                        "nl": "Er komt een oproep binnen"
+                    },
+                    "tokens": [
+                                    {
+                                        "name": "fb_tel_nr",
+                                        "title": {
+                                            "en": "Telephone number",
+                                            "nl": "Telefoon nummer"
+                                        }
+                                    }
+                                ]
+                 },
+                {
+                    "id": "fb_call_anwsered",
+                    "title": {
+                        "en": "Call Anwsered",
+                        "nl": "U heeft opgenomen"
+                    },
+                    "tokens": [
+                                    {
+                                        "name": "fb_tel_nr",
+                                        "title": {
+                                            "en": "Telephone number",
+                                            "nl": "Telefoon nummer"
+                                        }
+                                    }
+                                ]
+                 },
+                {
+                    "id": "fb_disconnect_call",
+                    "title": {
+                        "en": "Call ended",
+                        "nl": "Oproep is beeindigd"
+                    },
+                    "tokens": [
+                                    {
+                                        "name": "fb_duration",
+                                        "title": {
+                                            "en": "tijd",
+                                            "nl": "tijd"
+                                        }
+                                    }
+                                ]
+                 }
+            ],
+            "conditions": [
+            {
+                "id": "TelNumber",
+                "title": {
+                "en": "Telephone number !{{is|isn't}} ",
+                "nl": "Telefoon nummer !{{is|is niet}}"
+                },
+                "args":
+                [
+                {
+                    "name": "TelNr",
+                    "type": "number",
+                    "placeholder" :
+                    {
+                    "en": "Telephone number",
+                    "nl": "Telefoon nummer"
+                    }
+                }
+                ]
+            }
+        ]
+    }
+}

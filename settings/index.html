@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+		<style>
+			input {
+				font-size:16px;
+				width: 200px;
+				border: 1px solid #AAA;
+			}
+			label {
+				width: 150px;
+			}
+            fieldset {
+                border: none;
+                padding: 0;
+            }
+		</style>
+		
+    </head>
+    <body>
+
+        <h1>FritzBox Callmonitor</h1>
+        <fieldset>
+            <div>
+                <label for="hostname">IP Adres Fritz Box</label>
+                <input id="hostname" type="text" value="" placeholder="xxx.xxx.xxx.xxx" />
+            </div>
+            <div>
+                <label for="port">port</label>
+                <input id="port" type="text" value="1012" placeholder="1012"/>
+            </div>
+        </fieldset>
+        
+        <button class="right" id="savebutton" onclick="save()" >Save changes</button>
+
+        <script type="text/javascript">
+        function onHomeyReady(){
+
+		    Homey.get('fritz_host', function(err, host){
+		       if( err ) return console.error('Could not get to Fritz.Box', err);
+		       document.getElementById('hostname').value = host; 
+		    });
+		    
+		    Homey.get('fritz_port', function(err, port){
+		       if( err ) return console.error('Could not get port', err);
+		       document.getElementById('port').value = mail_port; 
+		    });
+		    
+            Homey.ready();
+        }
+
+        function save() {
+	        
+			var savebutton = document.getElementById('savebutton');
+			
+			savebutton.disabled = true;
+
+            Homey.set('fritz_host', document.getElementById('hostname').value);
+            Homey.set('fritz_port', document.getElementById('port').value);
+            
+            console.log ("saved the settings!");
+            
+            setTimeout(function() {
+                    savebutton.disabled = false;
+                }, 3500);
+                
+        }
+        
+        </script>
+
+    </body>
+</html>
