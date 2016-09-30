@@ -4,6 +4,10 @@
         "en": "FritzBox CallMonitor",
         "nl": "FritzBox Telefoon Monitor"
     },
+    "description": {
+        "en": "This app let's monitor incomming calls from your Fritz Box!",
+        "nl": "De app monitored je Fritz Box op inkomende oproepen."
+    },
     "version": "0.0.1",
     "compatibility": ">=0.8.30",
     "category": "internet",
