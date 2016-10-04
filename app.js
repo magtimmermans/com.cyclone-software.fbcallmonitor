@@ -32,18 +32,13 @@ function init() {
 	//setInterval(simCall, 20 * 1000); // for testing
 
     Homey.manager('flow').on('condition.TelNumber', function( callback, args ){
-      console.log(args);
       if (lastData) {
-          console.log('1');
         if (lastData.type!='DISCONNECT') {
-          console.log('2');
             if (lastData.remoteNumber==args.telnr) {
-          console.log('3');
                 callback( null, true );
             }
         }
       }
-          console.log('4');
       callback( null, false );
     }); 
 	
