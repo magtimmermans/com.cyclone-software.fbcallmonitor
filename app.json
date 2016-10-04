@@ -8,7 +8,7 @@
         "en": "This app let's monitor incomming calls from your Fritz Box!",
         "nl": "De app monitored je Fritz Box op inkomende oproepen."
     },
-    "version": "0.0.1",
+    "version": "0.0.2",
     "compatibility": ">=0.8.30",
     "category": "internet",
     "author": {
@@ -82,8 +82,8 @@
                 "args":
                 [
                 {
-                    "name": "TelNr",
-                    "type": "number",
+                    "name": "telnr",
+                    "type": "text",
                     "placeholder" :
                     {
                     "en": "Telephone number",

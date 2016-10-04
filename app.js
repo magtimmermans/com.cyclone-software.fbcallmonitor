@@ -4,6 +4,7 @@ const net = require('net');
 
 var host = 'fritz.box'; // ipaddress | 'fritz.box'
 var port = 1012;
+var lastData = null;
 
 /*
   #96*5* – Callmonitor inschakelen
@@ -29,6 +30,22 @@ function init() {
 	process.on('SIGBREAK', closeSocket);
 	
 	//setInterval(simCall, 20 * 1000); // for testing
+
+    Homey.manager('flow').on('condition.TelNumber', function( callback, args ){
+      console.log(args);
+      if (lastData) {
+          console.log('1');
+        if (lastData.type!='DISCONNECT') {
+          console.log('2');
+            if (lastData.remoteNumber==args.telnr) {
+          console.log('3');
+                callback( null, true );
+            }
+        }
+      }
+          console.log('4');
+      callback( null, false );
+    }); 
 	
 }
 
@@ -69,9 +86,9 @@ function parseCallMonitorLine(line) {
        break;
     case "CONNECT":
       result.line = chunks[3];
-      result.number = chunks[4];
+      result.remoteNumber = chunks[4];
       Homey.manager('flow').trigger('fb_call_anwsered', {
-        fb_tel_nr: result.number,
+        fb_tel_nr: result.remoteNumber,
       }); 
       break;
     case "DISCONNECT":
@@ -90,13 +107,15 @@ Homey.manager('flow').on('trigger.fb_incomming_call', function( callback, args){
 });
 
 
+
+
 function handleConnect() {
   Homey.log('fritz connected to ' + host);
 }
 
 function handleData(data) {
   var line = data.toString();
-  parseCallMonitorLine(line);
+  lastData=parseCallMonitorLine(line);
   Homey.log(line);
 }
 
