@@ -129,12 +129,11 @@ function handleError(err) {
 }
 
 function closeSocket() {
-  if (socket)
     socket.end();
 }
 
- Homey.on('unload', function(){
-    closeSocket();
- });
+//  Homey.on('unload', function(){
+//     closeSocket();
+//  });
 
 module.exports.init = init;
