@@ -5,6 +5,7 @@ const net = require('net');
 var host = 'fritz.box'; // ipaddress | 'fritz.box'
 var port = 1012;
 var lastData = null;
+var socket = null;
 
 /*
   #96*5* – Callmonitor inschakelen
@@ -18,7 +19,7 @@ function init() {
   host = Homey.manager('settings').get('fritz_host');
 	port = Homey.manager('settings').get('fritz_port');
 	
-	var socket = new net.Socket();
+  socket = new net.Socket();
 	socket.connect(port,host);
 	
 	socket.on('connect', handleConnect);
@@ -129,11 +130,14 @@ function handleError(err) {
 }
 
 function closeSocket() {
-    socket.end();
+   if (socket) {
+      socket.end();
+      socket=null;
+   }
 }
 
-//  Homey.on('unload', function(){
-//     closeSocket();
-//  });
+ Homey.on('unload', function(){
+    closeSocket();
+ });
 
 module.exports.init = init;
