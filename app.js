@@ -63,17 +63,6 @@ function init() {
 	
 	//setInterval(simCall, 20 * 1000); // for testing
 
-    Homey.manager('flow').on('condition.TelNumber', function( callback, args ){
-      if (lastData) {
-        if (lastData.type!='DISCONNECT') {
-            if (lastData.remoteNumber==args.telnr) {
-                callback( null, true );
-            }
-        }
-      }
-      callback( null, false );
-    }); 
-
 }
 
 
@@ -123,6 +112,18 @@ function parseCallMonitorLine(line) {
   return result;
 }
 
+
+Homey.manager('flow').on('condition.TelNumber', function( callback, args ){
+  if (lastData) {
+    if (lastData.type!='DISCONNECT') {
+        if (lastData.remoteNumber==args.telnr) {
+            callback( null, true );
+        }
+    }
+  }
+  callback( null, false );
+}); 
+
 Homey.manager('flow').on('trigger.fb_incomming_call', function( callback, args){
 	Homey.log('trigger fired');
     callback( null, true ); // true to make the flow continue, or false to abort
@@ -131,8 +132,11 @@ Homey.manager('flow').on('trigger.fb_incomming_call', function( callback, args){
 
 Homey.manager('settings').on('set', function (name) {
   Homey.log('variable ' + name + ' has been set');
+  closeSocket()
   init();
 });	
+
+
 
 function findNameInPB(number) {
    var unknown = (lang == 'nl' ? "onbekend" : "unknown");
