@@ -19,93 +19,81 @@
         "large": "assets/images/large.jpg",
         "small": "assets/images/small.jpg"
     },
-    "permissions": [
-    ],
+    "permissions": [],
     "flow": {
-        "triggers": [
-                {
-                    "id": "fb_incomming_call",
-                    "title": {
-                        "en": "Incomming call",
-                        "nl": "Er komt een oproep binnen"
-                    },
-                    "tokens": [
-                                    {
-                                        "name": "fb_tel_nr",
-                                        "title": {
-                                            "en": "Telephone number",
-                                            "nl": "Telefoon nummer"
-                                        }
-                                    },
-                                    {
-                                        "name": "fb_abonnee_name",
-                                        "title": {
-                                            "en": "Telephone Name",
-                                            "nl": "Abonnee Naam"
-                                        }
-                                    }
-                                ]
-                 },
-                {
-                    "id": "fb_call_anwsered",
-                    "title": {
-                        "en": "Call Anwsered",
-                        "nl": "U heeft opgenomen"
-                    },
-                    "tokens": [
-                                    {
-                                        "name": "fb_tel_nr",
-                                        "title": {
-                                            "en": "Telephone number",
-                                            "nl": "Telefoon nummer"
-                                        }
-                                    },
-                                    {
-                                        "name": "fb_abonnee_name",
-                                        "title": {
-                                            "en": "Telephone Name",
-                                            "nl": "Abonnee Naam"
-                                        }
-                                    }
-                                ]
-                 },
-                {
-                    "id": "fb_disconnect_call",
-                    "title": {
-                        "en": "Call ended",
-                        "nl": "Oproep is beeindigd"
-                    },
-                    "tokens": [
-                                    {
-                                        "name": "fb_duration",
-                                        "title": {
-                                            "en": "tijd",
-                                            "nl": "tijd"
-                                        }
-                                    }
-                                ]
-                 }
-            ],
-            "conditions": [
-            {
-                "id": "TelNumber",
+        "triggers": [{
+                "id": "fb_incomming_call",
                 "title": {
+                    "en": "Incomming call",
+                    "nl": "Er komt een oproep binnen"
+                },
+                "tokens": [{
+                        "name": "fb_tel_nr",
+                        "title": {
+                            "en": "Telephone number",
+                            "nl": "Telefoon nummer"
+                        }
+                    },
+                    {
+                        "name": "fb_abonnee_name",
+                        "title": {
+                            "en": "Telephone Name",
+                            "nl": "Abonnee Naam"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "fb_call_anwsered",
+                "title": {
+                    "en": "Call Anwsered",
+                    "nl": "U heeft opgenomen"
+                },
+                "tokens": [{
+                        "name": "fb_tel_nr",
+                        "title": {
+                            "en": "Telephone number",
+                            "nl": "Telefoon nummer"
+                        }
+                    },
+                    {
+                        "name": "fb_abonnee_name",
+                        "title": {
+                            "en": "Telephone Name",
+                            "nl": "Abonnee Naam"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "fb_disconnect_call",
+                "title": {
+                    "en": "Call ended",
+                    "nl": "Oproep is beeindigd"
+                },
+                "tokens": [{
+                    "name": "fb_duration",
+                    "title": {
+                        "en": "tijd",
+                        "nl": "tijd"
+                    }
+                }]
+            }
+        ],
+        "conditions": [{
+            "id": "TelNumber",
+            "title": {
                 "en": "Telephone number !{{is|isn't}} ",
                 "nl": "Telefoon nummer !{{is|is niet}}"
-                },
-                "args":
-                [
-                {
-                    "name": "telnr",
-                    "type": "text",
-                    "placeholder" :
-                    {
+            },
+            "args": [{
+                "name": "telnr",
+                "type": "text",
+                "placeholder": {
                     "en": "Telephone number",
                     "nl": "Telefoon nummer"
-                    }
                 }
-                ]
-            }
-        ]
+            }]
+        }]
     }
 }
