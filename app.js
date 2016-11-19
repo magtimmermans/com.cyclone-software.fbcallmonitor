@@ -6,6 +6,9 @@ var host = 'fritz.box'; // ipaddress | 'fritz.box'
 var port = 1012;
 var lastData = null;
 var socket = null;
+var phoneBookxml = '';
+var phoneBook = [];
+var lang = null;
 
 /*
   #96*5* – Callmonitor inschakelen
@@ -14,10 +17,38 @@ var socket = null;
 
 function init() {
 	
-	Homey.log("Init Socket");
+	Homey.log("Load Settings");
 
   host = Homey.manager('settings').get('fritz_host');
 	port = Homey.manager('settings').get('fritz_port');
+
+  lang = Homey.manager('i18n').getLanguage();
+
+	Homey.log("Load phonebook");
+
+
+  phoneBook=[];
+  phoneBookxml = Homey.manager('settings').get('fritz_phonebook');
+
+  if (phoneBookxml) {
+    var parseString = require('xml2js').parseString;
+    parseString(phoneBookxml, function (err, result) {
+       if (!err) {
+          result.phonebooks.phonebook[0].contact.forEach(function (item) {
+          //  console.log(item.person[0].realName[0]);
+            item.telephony[0].number.forEach(function (data) {
+              var number = data._;
+              if (!isNaN(number)) {
+                //console.log('add number:'+ number);
+                phoneBook[number] = item.person[0].realName[0];
+              }
+            })
+          })
+       }
+    });
+  }
+
+	Homey.log("Init Socket");
 	
   socket = new net.Socket();
 	socket.connect(port,host);
@@ -42,15 +73,8 @@ function init() {
       }
       callback( null, false );
     }); 
-	
+
 }
-
-Homey.manager('settings').on('set', function (name) {
-
-//	Homey.log('variable ' + name + ' has been set');
-	init();
-	
-});
 
 
 // function simCall() {
@@ -78,6 +102,7 @@ function parseCallMonitorLine(line) {
        result.localNumber = chunks[4];
         Homey.manager('flow').trigger('fb_incomming_call', {
           fb_tel_nr: result.remoteNumber,
+          fb_abonnee_name : findNameInPB(result.remoteNumber)
         }); 
        break;
     case "CONNECT":
@@ -85,6 +110,7 @@ function parseCallMonitorLine(line) {
       result.remoteNumber = chunks[4];
       Homey.manager('flow').trigger('fb_call_anwsered', {
         fb_tel_nr: result.remoteNumber,
+        fb_abonnee_name : findNameInPB(result.remoteNumber)
       }); 
       break;
     case "DISCONNECT":
@@ -103,6 +129,20 @@ Homey.manager('flow').on('trigger.fb_incomming_call', function( callback, args){
 });
 
 
+Homey.manager('settings').on('set', function (name) {
+  Homey.log('variable ' + name + ' has been set');
+  init();
+});	
+
+function findNameInPB(number) {
+   var unknown = (lang == 'nl' ? "onbekend" : "unknown");
+   if (phoneBook) {
+       if (phoneBook[number]) {
+         return phoneBook[number];
+       } else unknown
+   } else
+       return unknown
+}
 
 
 function handleConnect() {

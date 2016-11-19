@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
     <head>
+    <script type=text/javascript src=/manager/webserver/assets/js/jquery.js></script>
 		<style>
 			input {
 				font-size:16px;
@@ -29,9 +30,27 @@
                 <label for="port">port</label>
                 <input id="port" type="text" value="1012" placeholder="1012"/>
             </div>
+            <div>
+                <button class="right" id="savebutton" onclick="save()" >Save changes</button>
+            </div>
         </fieldset>
         
-        <button class="right" id="savebutton" onclick="save()" >Save changes</button>
+
+
+        <h1>Save phone book data</h1>
+        <fieldset>
+            <div>
+        Copy the content of your downloaded phonebook (xml) from Fritz.Box (Telephony > Telephone Book) into this form.
+                <p>
+                    <textarea id="phonebookdata" rows="6" cols="60"></textarea>
+                </p>
+            </div>
+            <div>
+                <button class="right" id="savePhoneBook" onclick="savePhoneBook()" >Save phonebook data</button>
+            </div>
+        </fieldset>
+
+
 
         <script type="text/javascript">
         function onHomeyReady(){
@@ -43,9 +62,14 @@
 		    
 		    Homey.get('fritz_port', function(err, port){
 		       if( err ) return console.error('Could not get port', err);
-		       document.getElementById('port').value = mail_port; 
+		       document.getElementById('port').value = port; 
 		    });
 		    
+		    Homey.get('fritz_phonebook', function(err, data){
+		       if( err ) return console.error('Could load phonebookdata', err);
+		       document.getElementById('phonebookdata').value = data; 
+		    });
+
             Homey.ready();
         }
 
@@ -65,7 +89,20 @@
                 }, 3500);
                 
         }
-        
+        function savePhoneBook() {
+	        
+			var savebutton = document.getElementById('savePhoneBook');
+			
+			savebutton.disabled = true;
+
+            Homey.set('fritz_phonebook', document.getElementById('phonebookdata').value);
+            console.log ("saved phonebook settings!");
+            
+            setTimeout(function() {
+                    savebutton.disabled = false;
+                }, 3500);
+        }
+
         </script>
 
     </body>
