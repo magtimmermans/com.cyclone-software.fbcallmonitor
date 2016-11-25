@@ -10,6 +10,8 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call Anwsered
     - Call ended
 
+### v 0.0.5
+Changed localize bug.
 
 ### v 0.0.4
 In this release we have added the phonebook list from Fritz.Box. Unfortunatly we could not make an automatic update between Fritz.Box and Homey. The way I solved it is download the phonebook from FritzBox and copy the contents in the box on the settings screen. This is the best I could do. Currently it is experimental and only tested with the phonebook from FritzBox 06.52. Only one phonebook is currently supported.

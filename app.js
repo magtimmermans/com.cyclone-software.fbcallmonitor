@@ -8,7 +8,6 @@ var lastData = null;
 var socket = null;
 var phoneBookxml = '';
 var phoneBook = [];
-var lang = null;
 
 /*
   #96*5* – Callmonitor inschakelen
@@ -21,8 +20,6 @@ function init() {
 
     host = Homey.manager('settings').get('fritz_host');
     port = Homey.manager('settings').get('fritz_port');
-
-    lang = Homey.manager('i18n').getLanguage();
 
     Homey.log("Load phonebook");
 
@@ -61,7 +58,7 @@ function init() {
     process.on('SIGTERM', closeSocket);
     process.on('SIGBREAK', closeSocket);
 
-   // setInterval(simCall, 20 * 1000); // for testing
+    //    setInterval(simCall, 20 * 1000); // for testing
 
 }
 
@@ -140,7 +137,7 @@ Homey.manager('settings').on('set', function(name) {
 
 
 function findNameInPB(number) {
-    var unknown = (lang == 'nl' ? "onbekend" : "unknown");
+    var unknown = __('unknown');
     if (phoneBook) {
         if (number in phoneBook) {
             return phoneBook[number];
