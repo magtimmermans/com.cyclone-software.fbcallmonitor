@@ -10,6 +10,9 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call Anwsered
     - Call ended
 
+### v 0.0.6
+Added current date & time to triggers Incomming Call & Call Anwsered
+
 ### v 0.0.5
 Changed localize bug.
 

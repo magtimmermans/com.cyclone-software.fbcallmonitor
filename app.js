@@ -47,16 +47,20 @@ function init() {
 
     Homey.log("Init Socket");
 
-    socket = new net.Socket();
-    socket.connect(port, host);
+    if (port) {
+        socket = new net.Socket();
+        socket.connect(port, host);
 
-    socket.on('connect', handleConnect);
-    socket.on('data', handleData);
-    socket.on('error', handleError);
+        socket.on('connect', handleConnect);
+        socket.on('data', handleData);
+        socket.on('error', handleError);
 
-    process.on('SIGINT', closeSocket);
-    process.on('SIGTERM', closeSocket);
-    process.on('SIGBREAK', closeSocket);
+        process.on('SIGINT', closeSocket);
+        process.on('SIGTERM', closeSocket);
+        process.on('SIGBREAK', closeSocket);
+    }
+
+
 
     //    setInterval(simCall, 20 * 1000); // for testing
 
@@ -89,7 +93,8 @@ function parseCallMonitorLine(line) {
             console.log(findNameInPB(result.remoteNumber));
             Homey.manager('flow').trigger('fb_incomming_call', {
                 fb_tel_nr: result.remoteNumber,
-                fb_abonnee_name: findNameInPB(result.remoteNumber)
+                fb_abonnee_name: findNameInPB(result.remoteNumber),
+                fb_datetime: new Date().toLocaleString()
             });
             break;
         case "CONNECT":
@@ -97,7 +102,8 @@ function parseCallMonitorLine(line) {
             result.remoteNumber = chunks[4];
             Homey.manager('flow').trigger('fb_call_anwsered', {
                 fb_tel_nr: result.remoteNumber,
-                fb_abonnee_name: findNameInPB(result.remoteNumber)
+                fb_abonnee_name: findNameInPB(result.remoteNumber),
+                fb_datetime: new Date().toLocaleString()
             });
             break;
         case "DISCONNECT":
