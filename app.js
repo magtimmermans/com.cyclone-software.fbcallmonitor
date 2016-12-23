@@ -1,5 +1,3 @@
-"use strict";
-
 const net = require('net');
 
 var host = 'fritz.box'; // ipaddress | 'fritz.box'
