@@ -1,3 +1,18 @@
 {
-    "unknown": "unknown"
+    "unknown": "unknown",
+	"pair":
+	{
+		"select_fritzbox":
+		{
+			"title": "Select FRITZ!Box",
+			"no_fritzes": "Please configure the FRITZ!Box settings on the setting page of the app."
+		},
+		"enter_credentials":
+		{
+			"title": "Enter FRITZ!Box credentials",
+			"description": "Please enter the credentials of a user that has priveleges to see the Home Automation section of this FRITZ!Box.",
+			"verifyingCredentials": "Verifying user credentials",
+			"invalid_credentials": "The credentials are either invalid, the user doesn't have rights to access Fritz home automation or the FRITZ!Box is unavailabe."
+		}
+	}
 }

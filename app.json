@@ -8,17 +8,62 @@
         "en": "This app let's monitor incomming calls from your Fritz Box!",
         "nl": "De app monitored je Fritz Box op inkomende oproepen."
     },
-    "version": "0.0.7",
+    "version": "0.1.0",
     "compatibility": ">=0.8.30",
     "category": "internet",
     "author": {
         "name": "Marcel Timmermans",
         "email": "marcel@timmermans.us"
     },
+   "contributors":{
+      "developers":[
+         {
+            "name":"Robert Raaijmakers",
+            "email":"dutchfighter@live.nl"
+         }
+      ]
+   },
     "images": {
         "large": "assets/images/large.jpg",
         "small": "assets/images/small.jpg"
     },
+	"drivers": [
+		{
+			"id": "socket",
+			"name": {
+				"en": "FRITZ!DECT 200",
+				"nl": "FRITZ!DECT 200"
+			},
+			"class": "socket",
+			"capabilities": [ "onoff", "measure_temperature", "meter_power", "measure_power" ],
+			"images": {
+				"large": "drivers/socket/assets/images/large.jpg",
+				"small": "drivers/socket/assets/images/small.jpg"
+			},
+			"pair": [
+				{
+					"id": "select_fritz",
+					"navigation": {
+						"next": "enter_credentials"
+					}
+				},
+				{
+					"id": "enter_credentials"
+				},
+				{
+					"id": "list_devices",
+					"template": "list_devices",
+					"navigation": {
+						"next": "add_devices"
+					}
+				},
+				{
+					"id": "add_devices",
+					"template": "add_devices"
+				}
+			]
+		}
+	],
     "permissions": [],
     "flow": {
         "triggers": [{

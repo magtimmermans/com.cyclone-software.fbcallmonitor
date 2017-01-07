@@ -1,0 +1,55 @@
+<style type="text/css">
+.device span.name {
+	padding-left: 10px;
+}
+</style>
+
+<script type="text/javascript">
+
+Homey.setTitle( __('pair.select_fritzbox.title') );
+
+Homey.emit('select_fritzbox', null, function( err, fritzes ){
+	$('#fritzes-list-loading').fadeOut(200);
+
+	if( err ) return error( err );
+
+
+	if( fritzes.length === 0 )
+		return error( 'pair.select_fritzbox.no_fritzes' );
+
+	// render list
+	var fritzesRender = $('#fritzes-list-template').render( fritzes );
+	$('#fritzes-list').html( fritzesRender );
+
+	// auto-select first item
+	if( $('#fritzes-list .radio input').length > 0 && $('#fritzes-list .radio input:checked').length < 1 ) {
+		$('#fritzes-list .radio input').first().prop('checked', true).trigger('change');
+	}
+})
+
+function error( str ) {
+	$('#error').html( __( str ) );
+	Homey.setNavigationClose();
+}
+
+$(document).on('change', '#fritzes-list input:radio', function(){
+	window.fritz_routerId = this.value;
+});
+
+</script>
+
+<script type="text/html" id="fritzes-list-template">
+	<li class="device">
+		<label for='device-{{:id}}' class="name">
+			<span class="icon" style="-webkit-mask-image: url({{:icon}})"></span>
+			<span class="name">{{:name}}</span>
+		</label>
+		<label for='device-{{:id}}' class="radio">
+			<input id='device-{{:id}}' type="radio" name="device" value="{{:id}}" tabindex="{{:#index+1}}" />
+		</label>
+	</li>
+</script>
+
+<i id="fritzes-list-loading" class="loading fa fa-cog fa-spin"></i>
+<ul id="fritzes-list" class="deviceclasses-list"></ul>
+<p id="error"></p>
