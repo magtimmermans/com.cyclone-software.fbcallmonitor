@@ -9,6 +9,10 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Incomming call
     - Call Anwsered
     - Call ended
+    - Outgoing call
+
+### v 0.0.8 
+Added trigger for outgoing call
 
 ### v 0.0.7
 Small fix for homeys that have older software versions
