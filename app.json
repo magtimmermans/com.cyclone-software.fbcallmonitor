@@ -8,7 +8,7 @@
         "en": "This app let's monitor incomming calls from your Fritz Box!",
         "nl": "De app monitored je Fritz Box op inkomende oproepen."
     },
-    "version": "0.0.7",
+    "version": "0.0.8",
     "compatibility": ">=0.8.30",
     "category": "internet",
     "author": {
@@ -55,6 +55,35 @@
                 "title": {
                     "en": "Call Anwsered",
                     "nl": "U heeft opgenomen"
+                },
+                "tokens": [{
+                        "name": "fb_tel_nr",
+                        "title": {
+                            "en": "Telephone number",
+                            "nl": "Telefoon nummer"
+                        }
+                    },
+                    {
+                        "name": "fb_abonnee_name",
+                        "title": {
+                            "en": "Telephone Name",
+                            "nl": "Abonnee Naam"
+                        }
+                    },
+                    {
+                        "name": "fb_datetime",
+                        "title": {
+                            "en": "Date Time",
+                            "nl": "Datum Tijd"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "fb_call",
+                "title": {
+                    "en": "Outgoing Call",
+                    "nl": "U belt uit"
                 },
                 "tokens": [{
                         "name": "fb_tel_nr",
