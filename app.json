@@ -1,14 +1,14 @@
 {
     "id": "com.cyclone-software.fbcallmonitor",
     "name": {
-        "en": "FritzBox CallMonitor",
+        "en": "FritzBox Call Monitor",
         "nl": "FritzBox Telefoon Monitor"
     },
     "description": {
-        "en": "This app let's monitor incomming calls from your Fritz Box!",
-        "nl": "De app monitored je Fritz Box op inkomende oproepen."
+        "en": "This app let's monitor incomming calls from your Fritz Box and monitors Fritz connected devices!",
+        "nl": "De app monitored je Fritz Box op inkomende oproepen en je monitored je gekoppelde Fritz apparaten."
     },
-    "version": "0.1.0",
+    "version": "0.2.0",
     "compatibility": ">=0.8.30",
     "category": "internet",
     "author": {
@@ -41,7 +41,7 @@
 				"small": "drivers/socket/assets/images/small.jpg"
 			},
 			"pair": [
-				{
+				{	
 					"id": "select_fritz",
 					"navigation": {
 						"next": "enter_credentials"
@@ -74,6 +74,7 @@
                 },
                 "tokens": [{
                         "name": "fb_tel_nr",
+                        "type": "string",
                         "title": {
                             "en": "Telephone number",
                             "nl": "Telefoon nummer"
@@ -81,6 +82,7 @@
                     },
                     {
                         "name": "fb_abonnee_name",
+                        "type": "string",
                         "title": {
                             "en": "Telephone Name",
                             "nl": "Abonnee Naam"
@@ -88,6 +90,7 @@
                     },
                     {
                         "name": "fb_datetime",
+                        "type": "string",
                         "title": {
                             "en": "Date Time",
                             "nl": "Datum Tijd"
@@ -103,6 +106,7 @@
                 },
                 "tokens": [{
                         "name": "fb_tel_nr",
+                        "type": "string",
                         "title": {
                             "en": "Telephone number",
                             "nl": "Telefoon nummer"
@@ -110,6 +114,7 @@
                     },
                     {
                         "name": "fb_abonnee_name",
+                        "type": "string",
                         "title": {
                             "en": "Telephone Name",
                             "nl": "Abonnee Naam"
@@ -117,6 +122,7 @@
                     },
                     {
                         "name": "fb_datetime",
+                        "type": "string",
                         "title": {
                             "en": "Date Time",
                             "nl": "Datum Tijd"
@@ -132,6 +138,7 @@
                 },
                 "tokens": [{
                     "name": "fb_duration",
+                    "type": "string",
                     "title": {
                         "en": "Duration",
                         "nl": "tijd"
