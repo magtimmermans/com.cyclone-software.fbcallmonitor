@@ -84,11 +84,13 @@ function initCallMonitor() {
     //    setInterval(simCall, 20 * 1000); // for testing
 }
 
-// function simCall() {
-//     parseCallMonitorLine('22.09.16 19:03:31;RING;0;026123456;026123456;SIP2;');
-//     parseCallMonitorLine('22.09.16 12:45:47;CONNECT;0;12;0263561234;');
-//     parseCallMonitorLine('22.09.16 12:46:01;DISCONNECT;0;11;');
-// }
+
+function simCall() {
+    //  parseCallMonitorLine('22.09.16 19:03:31;RING;0;0263561234;0263561234;SIP2;');
+    // parseCallMonitorLine('22.09.16 12:45:47;CONNECT;0;12;0263561234;');
+    // parseCallMonitorLine('22.09.16 12:46:01;DISCONNECT;0;11;');
+    //  parseCallMonitorLine('15.01.17 12:22:31;CALL;1;12;0263233889;0263561234;SIP2;')
+}
 
 function parseCallMonitorLine(line) {
     var chunks = line.split(';');
@@ -103,6 +105,11 @@ function parseCallMonitorLine(line) {
             result.line = chunks[3];
             result.localNumber = chunks[4];
             result.remoteNumber = chunks[5];
+            Homey.manager('flow').trigger('fb_call', {
+                fb_tel_nr: result.remoteNumber,
+                fb_abonnee_name: findNameInPB(result.remoteNumber),
+                fb_datetime: new Date().toLocaleString()
+            });
             break;
         case "RING":
             result.remoteNumber = chunks[3];
