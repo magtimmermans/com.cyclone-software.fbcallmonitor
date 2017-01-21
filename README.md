@@ -11,6 +11,10 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call ended
     - Outgoing call
 
+### v 0.0.9
+Added the Dect200 as item to the call monitor. So now you can control your DECT wall sockets from within your Homey.
+Supported capabilities of the DECT 200: onoff, meter_power and measure_power.
+
 ### v 0.0.8 
 Added trigger for outgoing call
 

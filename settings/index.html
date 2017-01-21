@@ -22,12 +22,15 @@
 
         <h1>FritzBox Callmonitor</h1>
         <fieldset>
+	        <p>
+		        To activate the call monitor dial #96*5* on one of your handsets.
+	        </p>
             <div>
                 <label for="hostname">IP Address Fritz Box</label>
                 <input id="hostname" type="text" value="" placeholder="xxx.xxx.xxx.xxx" />
             </div>
             <div>
-                <label for="port">port</label>
+                <label for="port">Port</label>
                 <input id="port" type="text" value="1012" placeholder="1012"/>
             </div>
             <div>
@@ -40,7 +43,7 @@
         <h1>Save phone book data</h1>
         <fieldset>
             <div>
-        Copy the content of your downloaded phonebook (xml) from Fritz.Box (Telephony > Telephone Book) into this form.
+				Copy the content of your downloaded phonebook (xml) from Fritz.Box (Telephony > Telephone Book) into this form.
                 <p>
                     <textarea id="phonebookdata" rows="6" cols="60"></textarea>
                 </p>
@@ -89,6 +92,7 @@
                 }, 3500);
                 
         }
+        
         function savePhoneBook() {
 	        
 			var savebutton = document.getElementById('savePhoneBook');

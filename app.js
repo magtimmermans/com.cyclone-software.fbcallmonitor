@@ -1,40 +1,58 @@
-const net = require('net');
+"use strict"
+const net 			= require('net');
+const events		= require('events');
+
+const Log 			= require('homey-log').Log;
+const fritz 		= require('fritzapi').Fritz;
+const Router		= require('./lib/router.js');
+
+const findFritzboxesInterval 	= 600000;
 
 var host = 'fritz.box'; // ipaddress | 'fritz.box'
 var port = 1012;
 var lastData = null;
 var socket = null;
-var phoneBookxml = '';
 var phoneBook = [];
 
 /*
   #96*5* – Callmonitor inschakelen
   #96*4* – Callmonitor uitschakelen
 */
+function initCallMonitor() {
 
-function init() {
-
-    Homey.log("Load Settings");
-
-    host = Homey.manager('settings').get('fritz_host');
-    port = Homey.manager('settings').get('fritz_port');
-
-    Homey.log("Load phonebook");
-
+    Homey.log("Load Phonebook");
 
     phoneBook = [];
-    phoneBookxml = Homey.manager('settings').get('fritz_phonebook');
+    let phoneBookxml = Homey.manager('settings').get('fritz_phonebook');
 
     if (phoneBookxml) {
         var parseString = require('xml2js').parseString;
-        parseString(phoneBookxml, function(err, result) {
+        parseString(phoneBookxml,
+		function(err, result) {
             if (!err) {
+				if(typeof result.phonebooks === 'undefined' || 
+					typeof result.phonebooks.phonebook[0] === 'undefined' ||
+					typeof result.phonebooks.phonebook[0].contact === 'undefined')
+					{
+						// Skip invalid phonebooks and log message, prevent app from crashing.
+						Homey.log("Phonebook XML contains invalid data.");
+						return false;
+					}
+				
                 result.phonebooks.phonebook[0].contact.forEach(function(item) {
-                    //  console.log(item.person[0].realName[0]);
+					if(typeof item.telephony[0] === 'undefined' ||
+						typeof item.telephony[0].number === 'undefined' ||
+						typeof item.person[0] === 'undefined' ||
+						typeof item.person[0].realName[0] === 'undefined')
+						{
+							// Skip invalid items.
+							return;
+						}
+					
                     item.telephony[0].number.forEach(function(data) {
                         var number = data._;
-                        if (!isNaN(number)) {
-                            //console.log('add number:'+ number);
+                        if (!isNaN(number))
+						{
                             phoneBook[number] = item.person[0].realName[0];
                         }
                     })
@@ -43,6 +61,11 @@ function init() {
         });
     }
 
+    Homey.log("Load Settings");
+
+    host = Homey.manager('settings').get('fritz_host');
+    port = Homey.manager('settings').get('fritz_port');
+	
     Homey.log("Init Socket");
 
     if (port) {
@@ -58,9 +81,7 @@ function init() {
         process.on('SIGBREAK', closeSocket);
     }
 
-
-    //  setInterval(simCall, 20 * 1000); // for testing
-
+    //    setInterval(simCall, 20 * 1000); // for testing
 }
 
 
@@ -119,7 +140,6 @@ function parseCallMonitorLine(line) {
     return result;
 }
 
-
 Homey.manager('flow').on('condition.TelNumber', function(callback, args) {
     if (lastData) {
         if (lastData.type != 'DISCONNECT') {
@@ -132,30 +152,41 @@ Homey.manager('flow').on('condition.TelNumber', function(callback, args) {
 });
 
 Homey.manager('flow').on('trigger.fb_incomming_call', function(callback, args) {
-    Homey.log('trigger fired');
+    Homey.log('Trigger fired');
     callback(null, true); // true to make the flow continue, or false to abort
 });
 
-
 Homey.manager('settings').on('set', function(name) {
-    Homey.log('variable ' + name + ' has been set');
+    Homey.log('Variable ' + name + ' has been set');
+	
+	// Don't reload when it is the fritzbox settings from the devices
+	if(name.indexOf("fritzbox_settings_") > -1)
+	{
+		return;
+	}
+	
     closeSocket()
-    init();
+    initCallMonitor();
 });
-
-
 
 function findNameInPB(number) {
     var unknown = __('unknown');
-    if (phoneBook) {
-        if (number in phoneBook) {
+    if (phoneBook)
+	{
+        if (number in phoneBook)
+		{
             return phoneBook[number];
-        } else
+        }
+		else
+		{
             return unknown;
-    } else
+		}
+    }
+	else
+	{
         return unknown;
+	}
 }
-
 
 function handleConnect() {
     Homey.log('fritz connected to ' + host);
@@ -168,7 +199,7 @@ function handleData(data) {
 }
 
 function handleError(err) {
-    // catch some errors
+    // Catch some errors
     Homey.error('Could not connect to ' + host);
     if (err.code === 'ECONNREFUSED') {
         Homey.error('Is the CallMonitor enabled?');
@@ -192,4 +223,104 @@ Homey.on('unload', function() {
     closeSocket();
 });
 
-module.exports.init = init;
+//module.exports.init = init;
+
+
+/******
+***
+*** To handle FRITZBOX smart home functionalities
+***
+*******/
+class App extends events.EventEmitter {
+
+	constructor() {
+		super();
+
+		this.setMaxListeners(0);
+		this._fritzboxes = {};
+		this.init = this._onExportsInit.bind(this);
+	}
+
+	/*
+		Helper methods
+	*/
+	log() {
+		console.log.bind(this, '[log]' ).apply( this, arguments );
+	}
+
+	error() {
+		console.error.bind( this, '[error]' ).apply( this, arguments );
+	}
+
+	/*
+		Fritzbox methods
+	*/
+	findFritzboxes() {		
+		// Get IP settings from app settings page.
+		// I don't know how to do a proper discovery function otherwise that would be nice
+		// Then you can add multiple FritzBoxes
+		let host = Homey.manager('settings').get('fritz_host');
+		
+		if(typeof host === 'undefined' || host === null || host === '')
+		{
+			return;
+		}
+		
+		let fritzbox = {
+			id: "abc-123",
+			ip: "http://" + host
+		};
+		
+		this._initFritzbox(fritzbox);
+	}
+
+	_initFritzbox( fritzbox ) {
+		console.log("_initFritzbox");
+		
+		fritzbox.id = fritzbox.id.toLowerCase();
+
+		// skip if already found but update ip if changed
+		if( this._fritzboxes[ fritzbox.id ] instanceof Router ) {
+
+			if( this._fritzboxes[ fritzbox.id ].address !== fritzbox.ip ) {
+				this.log(`Fritzbox ip has changed from ${this._fritzboxes[ fritzbox.id ].address} to ${fritzbox.ip}`);
+				this._fritzboxes[ fritzbox.id ].setAddress( fritzbox.ip );
+			}
+
+			return;
+		}
+
+		console.log("Found fritzbox");
+		this.log(`Found fritzbox ${fritzbox.id} @ ${fritzbox.ip}`);
+
+		this._fritzboxes[ fritzbox.id ] = new Router( fritzbox.id, fritzbox.ip );
+		this._fritzboxes[ fritzbox.id ]
+			.on('log', this.log.bind( this, `[${fritzbox.id}]`) )
+			.on('error', this.error.bind( this, `[${fritzbox.id}]`) )
+			.on('fritzbox_available', () => {
+				this.emit('fritzbox_available', this._fritzboxes[ fritzbox.id ] );
+			})
+			.init()
+	}
+
+	getFritzboxes() {
+		return this._fritzboxes;
+	}
+
+	getFritzbox( fritzboxId ) {
+		if( typeof fritzboxId !== 'string' ) return new Error('invalid_fritzbox');
+		return this._fritzboxes[ fritzboxId.toLowerCase() ] || new Error('invalid_fritzbox');
+	}
+
+	/*
+		Export methods
+	*/
+	_onExportsInit() {
+		console.log(`${Homey.manifest.id} running...`);
+		this.findFritzboxes();
+		setInterval( this.findFritzboxes.bind(this), findFritzboxesInterval );
+		initCallMonitor();
+	}
+}
+
+module.exports = new App();
