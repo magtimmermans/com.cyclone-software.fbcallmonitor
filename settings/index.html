@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
     <head>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
     <script type=text/javascript src=/manager/webserver/assets/js/jquery.js></script>
 		<style>
 			input {
@@ -56,7 +57,7 @@
 
 
         <script type="text/javascript">
-        function onHomeyReady(){
+        function onHomeyReady(Homey){
 
 		    Homey.get('fritz_host', function(err, host){
 		       if( err ) return console.error('Could not get to Fritz.Box', err);

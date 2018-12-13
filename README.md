@@ -11,6 +11,11 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call ended
     - Outgoing call
 
+### v0.2.0
+upgraded to Homey V2 and SDK 2.
+**!!Removed** the Dect200 as item to the call monitor. So now you can **NOT** control your DECT wall sockets from within your Homey using this App.
+(I do not have this system and could also not supported it anymore. The developer at that time did also not have this system anymore and had no time to upgrade this part)
+
 ### v 0.0.9
 Added the Dect200 as item to the call monitor. So now you can control your DECT wall sockets from within your Homey.
 Supported capabilities of the DECT 200: onoff, meter_power and measure_power.
