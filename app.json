@@ -9,7 +9,7 @@
         "en": "This app let's monitor incomming calls from your Fritz Box and monitors Fritz connected devices!",
         "nl": "De app monitored je Fritz Box op inkomende oproepen en je monitored je gekoppelde Fritz apparaten."
     },
-    "version": "0.2.1",
+    "version": "0.2.3",
     "compatibility": ">=2.0.0",
     "brandColor": "#E8461D",
     "contributing": {

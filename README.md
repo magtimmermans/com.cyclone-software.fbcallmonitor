@@ -11,6 +11,13 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call ended
     - Outgoing call
 
+### v0.2.3
+Fixed trigger errors
+
+### v0.2.2 
+fixed crash in case of error. 
+KNOWN BUG: After changing your IP Adress please restart the app! 
+
 ### v0.2.0
 upgraded to Homey V2 and SDK 2.
 **!!Removed** the Dect200 as item to the call monitor. So now you can **NOT** control your DECT wall sockets from within your Homey using this App.

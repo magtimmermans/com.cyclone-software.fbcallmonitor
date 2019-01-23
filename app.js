@@ -13,6 +13,7 @@ const telnumCondition = new Homey.FlowCardCondition('TelNumber');
 const fbIncommingCallTrigger = new Homey.FlowCardTrigger('fb_incomming_call');
 const fbCallAnwseredTrigger = new Homey.FlowCardTrigger('fb_call_anwsered');
 const fbCallDisconnectedTrigger = new Homey.FlowCardTrigger('fb_disconnect_call');
+const fbOutgoingTrigger = new Homey.FlowCardTrigger('fb_call');
 
 
 class FBApp extends Homey.App {
@@ -74,9 +75,9 @@ class FBApp extends Homey.App {
             socket = new net.Socket();
             socket.connect(port, host);
 
-            socket.on('connect', this.handleConnect);
+            socket.on('connect', this.handleConnect.bind(this));
             socket.on('data', this.handleData.bind(this));
-            socket.on('error', this.handleError);
+            socket.on('error', this.handleError.bind(this));
 
             process.on('SIGINT', this.closeSocket);
             process.on('SIGTERM', this.closeSocket);
@@ -118,6 +119,8 @@ class FBApp extends Homey.App {
                 return Promise.resolve( true );
             })
 
+            fbOutgoingTrigger.register();
+
                 //Get update settings
             Homey.ManagerSettings.on('set', (key) => {
                     console.log('Update Settings:');    
@@ -139,16 +142,16 @@ class FBApp extends Homey.App {
 
         }
 
-        //    setInterval(simCall, 20 * 1000); // for testing
+       // setInterval(this.simCall.bind(this), 60 * 1000); // for testing
     }
 
 
-    simCall() {
-        //  parseCallMonitorLine('22.09.16 19:03:31;RING;0;0263561234;0263561234;SIP2;');
-        // parseCallMonitorLine('22.09.16 12:45:47;CONNECT;0;12;0263561234;');
-        // parseCallMonitorLine('22.09.16 12:46:01;DISCONNECT;0;11;');
-        //  parseCallMonitorLine('15.01.17 12:22:31;CALL;1;12;0263233889;0263561234;SIP2;')
-    }
+    // simCall() {
+    //      this.parseCallMonitorLine('22.09.16 19:03:31;RING;0;0263561234;0263561234;SIP2;');
+    //      this.parseCallMonitorLine('22.09.16 12:45:47;CONNECT;0;12;0263561234;');
+    //      this.parseCallMonitorLine('22.09.16 12:46:01;DISCONNECT;0;11;');
+    //      this.parseCallMonitorLine('15.01.17 12:22:31;CALL;1;12;026312119;0263561234;SIP2;')
+    // }
 
     parseCallMonitorLine(line) {
         var chunks = line.split(';');
@@ -163,11 +166,11 @@ class FBApp extends Homey.App {
                 result.line = chunks[3];
                 result.localNumber = chunks[4];
                 result.remoteNumber = chunks[5];
-                Homey.manager('flow').trigger('fb_call', {
+                fbOutgoingTrigger.trigger({
                     fb_tel_nr: result.remoteNumber,
                     fb_abonnee_name: this.findNameInPB(result.remoteNumber),
                     fb_datetime: new Date().toLocaleString()
-                });
+                }).catch(this.error).then(this.log);
                 break;
             case "RING":
                 result.remoteNumber = chunks[3];
@@ -179,10 +182,8 @@ class FBApp extends Homey.App {
                 var state = {};
                 console.log(tokens);
                 console.log(state);
-                fbIncommingCallTrigger.trigger( tokens, state,  function(err, result){
-                if( err ) {
-                        return Homey.error(err)}
-                });
+                fbIncommingCallTrigger.trigger( tokens, state).catch(this.error).then(this.log);
+                console.log("trigger done");
                 break;
             case "CONNECT":
                 result.line = chunks[3];
@@ -190,17 +191,11 @@ class FBApp extends Homey.App {
 
                 var tokens = { 'fb_tel_nr': result.remoteNumber, 'fb_abonnee_name': this.findNameInPB(result.remoteNumber), 'fb_datetime': new Date().toLocaleString() };
                 var state = {};
-                fbCallAnwseredTrigger.trigger( tokens, state,  function(err, result){
-                    if( err ) {
-                            return Homey.error(err)}
-                    });
+                fbCallAnwseredTrigger.trigger( tokens, state).catch(this.error).then(this.log);
                 break;
             case "DISCONNECT":
                 result.duration = chunks[3];
-                fbCallDisconnectedTrigger.trigger({'fb_duration': result.duration}, null,  function(err, result){
-                    if( err ) {
-                            return Homey.error(err)}
-                    });
+                fbCallDisconnectedTrigger.trigger({'fb_duration': result.duration}, null).catch(this.error).then(this.log);
                 break;
         }
         return result;
@@ -227,26 +222,26 @@ class FBApp extends Homey.App {
     }
 
     handleConnect() {
-        console.log('fritz connected to ' + host);
+        this.log('fritz connected to ' + host);
     }
 
     handleData(data) {
         var line = data.toString();
         lastData = this.parseCallMonitorLine(line);
-        console.log(line);
+        this.log(line);
     }
 
     handleError(err) {
         // Catch some errors
-        Homey.error('Could not connect to ' + host);
+        this.error('Could not connect to ' + host);
         if (err.code === 'ECONNREFUSED') {
-            Homey.error('Is the CallMonitor enabled?');
+            this.error('Is the CallMonitor enabled?');
         } else if (err.code === 'ENOTFOUND') {
-            Homey.error('Host ' + host + ' not found.');
+            this.error('Host ' + host + ' not found.');
         } else if (err.code === 'EHOSTUNREACH') {
-            Homey.error('Host ' + host + ' not found.');
+            this.error('Host ' + host + ' not found.');
         } else {
-            Homey.error(err.code);
+            this.error(err.code);
         }
     }
 
