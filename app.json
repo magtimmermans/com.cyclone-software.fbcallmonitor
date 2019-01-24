@@ -9,7 +9,7 @@
         "en": "This app let's monitor incomming calls from your Fritz Box and monitors Fritz connected devices!",
         "nl": "De app monitored je Fritz Box op inkomende oproepen en je monitored je gekoppelde Fritz apparaten."
     },
-    "version": "0.2.3",
+    "version": "0.2.4",
     "compatibility": ">=2.0.0",
     "brandColor": "#E8461D",
     "contributing": {
@@ -61,6 +61,37 @@
                         }
                     }
                 ]
+            },
+            {"id": "fb_missed_call",
+            "title": {
+                "en": "Missed call",
+                "nl": "Gemiste oproep"
+            },
+            "tokens": [{
+                    "name": "fb_tel_nr",
+                    "type": "string",
+                    "title": {
+                        "en": "Telephone number",
+                        "nl": "Telefoon nummer"
+                    }
+                },
+                {
+                    "name": "fb_abonnee_name",
+                    "type": "string",
+                    "title": {
+                        "en": "Telephone Name",
+                        "nl": "Abonnee Naam"
+                    }
+                },
+                {
+                    "name": "fb_datetime",
+                    "type": "string",
+                    "title": {
+                        "en": "Date Time",
+                        "nl": "Datum Tijd"
+                    }
+                }
+            ]
             },
             {
                 "id": "fb_call_anwsered",

@@ -10,6 +10,10 @@ This is a call monitor for Fritz.Box routers. You can switch on/off the call mon
     - Call Anwsered
     - Call ended
     - Outgoing call
+    - Missed Call
+
+### v0.2.4
+New Trigger missed call    
 
 ### v0.2.3
 Fixed trigger errors

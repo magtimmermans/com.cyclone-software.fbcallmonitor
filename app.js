@@ -7,6 +7,7 @@ var port = 1012;
 var lastData = null;
 var socket = null;
 var phoneBook = [];
+var Call = false;
 
 
 const telnumCondition = new Homey.FlowCardCondition('TelNumber');
@@ -14,6 +15,7 @@ const fbIncommingCallTrigger = new Homey.FlowCardTrigger('fb_incomming_call');
 const fbCallAnwseredTrigger = new Homey.FlowCardTrigger('fb_call_anwsered');
 const fbCallDisconnectedTrigger = new Homey.FlowCardTrigger('fb_disconnect_call');
 const fbOutgoingTrigger = new Homey.FlowCardTrigger('fb_call');
+const fbMissedCallTrigger = new Homey.FlowCardTrigger('fb_missed_call');
 
 
 class FBApp extends Homey.App {
@@ -83,6 +85,7 @@ class FBApp extends Homey.App {
             process.on('SIGTERM', this.closeSocket);
             process.on('SIGBREAK', this.closeSocket);
 
+            fbMissedCallTrigger.register();
 
             telnumCondition
             .register()
@@ -98,27 +101,9 @@ class FBApp extends Homey.App {
             })
         
         
-            fbIncommingCallTrigger
-                .register()
-                .registerRunListener(( args, state ) => {
-                    console.log("incomming call fired");
-                    return Promise.resolve( true );
-                })
-
-            fbCallAnwseredTrigger
-            .register()
-            .registerRunListener(( args, state ) => {
-                console.log("call anwsered fired");
-                return Promise.resolve( true );
-            })
-
-            fbCallDisconnectedTrigger
-            .register()
-            .registerRunListener(( args, state ) => {
-                console.log("call disconnected");
-                return Promise.resolve( true );
-            })
-
+            fbIncommingCallTrigger.register();
+            fbCallAnwseredTrigger.register();
+            fbCallDisconnectedTrigger.register();
             fbOutgoingTrigger.register();
 
                 //Get update settings
@@ -163,9 +148,11 @@ class FBApp extends Homey.App {
 
         switch (result.type) {
             case "CALL":
+                Call=false; // Just to make sure
                 result.line = chunks[3];
                 result.localNumber = chunks[4];
                 result.remoteNumber = chunks[5];
+                
                 fbOutgoingTrigger.trigger({
                     fb_tel_nr: result.remoteNumber,
                     fb_abonnee_name: this.findNameInPB(result.remoteNumber),
@@ -173,11 +160,10 @@ class FBApp extends Homey.App {
                 }).catch(this.error).then(this.log);
                 break;
             case "RING":
+                Call=true // Incomming call
                 result.remoteNumber = chunks[3];
                 result.localNumber = chunks[4];
                 console.log(this.findNameInPB(result.remoteNumber));
-
-
                 var tokens = { 'fb_tel_nr': result.remoteNumber, 'fb_abonnee_name': this.findNameInPB(result.remoteNumber), 'fb_datetime': new Date().toLocaleString() };
                 var state = {};
                 console.log(tokens);
@@ -186,6 +172,7 @@ class FBApp extends Homey.App {
                 console.log("trigger done");
                 break;
             case "CONNECT":
+                Call=false // taken the call
                 result.line = chunks[3];
                 result.remoteNumber = chunks[4];
 
@@ -194,6 +181,15 @@ class FBApp extends Homey.App {
                 fbCallAnwseredTrigger.trigger( tokens, state).catch(this.error).then(this.log);
                 break;
             case "DISCONNECT":
+                if (Call) {
+                    // missed call
+                    fbMissedCallTrigger.trigger({
+                        fb_tel_nr: lastData.remoteNumber,
+                        fb_abonnee_name: this.findNameInPB(lastData.remoteNumber),
+                        fb_datetime: new Date().toLocaleString()
+                    }).catch(this.error).then(this.log);
+                }
+                Call=false;
                 result.duration = chunks[3];
                 fbCallDisconnectedTrigger.trigger({'fb_duration': result.duration}, null).catch(this.error).then(this.log);
                 break;
