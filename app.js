@@ -10,12 +10,6 @@ var phoneBook = [];
 var Call = false;
 
 
-const telnumCondition = new Homey.FlowCardCondition('TelNumber');
-const fbIncommingCallTrigger = new Homey.FlowCardTrigger('fb_incomming_call');
-const fbCallAnwseredTrigger = new Homey.FlowCardTrigger('fb_call_anwsered');
-const fbCallDisconnectedTrigger = new Homey.FlowCardTrigger('fb_disconnect_call');
-const fbOutgoingTrigger = new Homey.FlowCardTrigger('fb_call');
-const fbMissedCallTrigger = new Homey.FlowCardTrigger('fb_missed_call');
 
 
 class FBApp extends Homey.App {
@@ -25,10 +19,21 @@ class FBApp extends Homey.App {
     */
     onInit() {
 
-        console.log("Load Phonebook");
+        this.log(`${this.homey.manifest.id} V${this.homey.manifest.version} is running...`);
+
+        this._flowTriggers = [];
+
+        // const telnumCondition = this.homey.flow.getConditionCard('TelNumber');
+        // const fbIncommingCallTrigger = this.homey.flow.getTriggerCard('fb_incomming_call');
+        // const fbCallAnwseredTrigger = this.homey.flow.getTriggerCard('fb_call_anwsered');
+        // const fbCallDisconnectedTrigger = this.homey.flow.getTriggerCard('fb_disconnect_call');
+        // const fbOutgoingTrigger = this.homey.flow.getTriggerCard('fb_call');
+        // const fbMissedCallTrigger = this.homey.flow.getTriggerCard('fb_missed_call');
+
+        this.registerFlowCards();
 
         phoneBook = [];
-        let phoneBookxml =  Homey.ManagerSettings.get('fritz_phonebook'); //Homey.manager('settings').get('fritz_phonebook');
+        let phoneBookxml =  this.homey.settings.get('fritz_phonebook'); //Homey.manager('settings').get('fritz_phonebook');
 
         if (phoneBookxml) {
             var parseString = require('xml2js').parseString;
@@ -40,7 +45,7 @@ class FBApp extends Homey.App {
                         typeof result.phonebooks.phonebook[0].contact === 'undefined')
                         {
                             // Skip invalid phonebooks and log message, prevent app from crashing.
-                            console.log("Phonebook XML contains invalid data.");
+                            this.log("Phonebook XML contains invalid data.");
                             return false;
                         }
                     
@@ -66,12 +71,12 @@ class FBApp extends Homey.App {
             });
         }
 
-        console.log("Load Settings");
+        this.log("Load Settings");
 
-        host = Homey.ManagerSettings.get('fritz_host');  //Homey.manager('settings').get('fritz_host');
-        port = Homey.ManagerSettings.get('fritz_port');  //Homey.manager('settings').get('fritz_port');
+        host = this.homey.settings.get('fritz_host');  //Homey.manager('settings').get('fritz_host');
+        port = this.homey.settings.get('fritz_port');  //Homey.manager('settings').get('fritz_port');
         
-        console.log("Init Socket");
+        this.log("Init Socket");
 
         if (port) {
             socket = new net.Socket();
@@ -81,15 +86,17 @@ class FBApp extends Homey.App {
             socket.on('data', this.handleData.bind(this));
             socket.on('error', this.handleError.bind(this));
 
+            socket.on('close', function() {   // Try to reconnect after 30s
+                setTimeout(function() { this.onInit(); }, 30000 );
+                console.log('Connection Closed');
+              });
+
             process.on('SIGINT', this.closeSocket);
             process.on('SIGTERM', this.closeSocket);
             process.on('SIGBREAK', this.closeSocket);
 
-            fbMissedCallTrigger.register();
 
-            telnumCondition
-            .register()
-            .registerRunListener(( args, state ) => {
+            this._cards.telnumCondition.registerRunListener(( args, state ) => {
                 if (lastData) {
                     if (lastData.type != 'DISCONNECT') {
                         if (lastData.remoteNumber == args.telnr) {
@@ -101,33 +108,54 @@ class FBApp extends Homey.App {
             })
         
         
-            fbIncommingCallTrigger.register();
-            fbCallAnwseredTrigger.register();
-            fbCallDisconnectedTrigger.register();
-            fbOutgoingTrigger.register();
+            // fbIncommingCallTrigger.register();
+            // fbCallAnwseredTrigger.register();
+            // fbCallDisconnectedTrigger.register();
+            // fbOutgoingTrigger.register();
 
                 //Get update settings
-            Homey.ManagerSettings.on('set', (key) => {
+            this.homey.settings.on('set', (key) => {
                     console.log('Update Settings:');    
                     console.log(key);
 
                     // Don't reload when it is the fritzbox settings from the devices
-                    if(name.indexOf("fritzbox_settings_") > -1)
-                    {
-                        return;
-                    }
+                    // if(name.indexOf("fritzbox_settings_") > -1)
+                    // {
+                    //     return;
+                    // }
 
                     closeSocket()
                     onInit();
             });
 
-            Homey.on('unload', function() {
+            this.homey.on('unload', function() {
                 this.closeSocket();
             });
 
         }
 
-       // setInterval(this.simCall.bind(this), 60 * 1000); // for testing
+      //  setInterval(this.simCall.bind(this), 60 * 1000); // for testing
+    }
+
+    // register homey flowcards 
+    registerFlowCards() {
+        let triggers = [
+            'fb_incomming_call',
+            'fb_call_anwsered',
+            'fb_disconnect_call',
+            'fb_call',
+            'fb_missed_call'
+        ];
+
+        for (const trigger of triggers) {
+            this._flowTriggers[trigger] = this.homey.flow.getTriggerCard(trigger);
+        }
+
+        //* register cards
+        this._cards = {
+            telnumCondition: this.homey.flow.getConditionCard('TelNumber'),
+        }
+
     }
 
 
@@ -146,6 +174,8 @@ class FBApp extends Homey.App {
         result.type = chunks[1];
         result.connectionId = chunks[2];
 
+       // console.log(line);
+
         switch (result.type) {
             case "CALL":
                 Call=false; // Just to make sure
@@ -153,11 +183,11 @@ class FBApp extends Homey.App {
                 result.localNumber = chunks[4];
                 result.remoteNumber = chunks[5];
                 
-                fbOutgoingTrigger.trigger({
+                this._flowTriggers['fb_call'].trigger({
                     fb_tel_nr: result.remoteNumber,
                     fb_abonnee_name: this.findNameInPB(result.remoteNumber),
                     fb_datetime: new Date().toLocaleString()
-                }).catch(this.error).then(this.log);
+                }).catch(this.error);
                 break;
             case "RING":
                 Call=true // Incomming call
@@ -168,8 +198,8 @@ class FBApp extends Homey.App {
                 var state = {};
                 console.log(tokens);
                 console.log(state);
-                fbIncommingCallTrigger.trigger( tokens, state).catch(this.error).then(this.log);
-                console.log("trigger done");
+                this._flowTriggers['fb_incomming_call'].trigger( tokens, state).catch(this.error);
+                //console.log("trigger done");
                 break;
             case "CONNECT":
                 Call=false // taken the call
@@ -178,20 +208,21 @@ class FBApp extends Homey.App {
 
                 var tokens = { 'fb_tel_nr': result.remoteNumber, 'fb_abonnee_name': this.findNameInPB(result.remoteNumber), 'fb_datetime': new Date().toLocaleString() };
                 var state = {};
-                fbCallAnwseredTrigger.trigger( tokens, state).catch(this.error).then(this.log);
+                this._flowTriggers['fb_call_anwsered'].trigger( tokens, state).catch(this.error);
                 break;
             case "DISCONNECT":
                 if (Call) {
                     // missed call
+                    this.log('missed call');
                     fbMissedCallTrigger.trigger({
                         fb_tel_nr: lastData.remoteNumber,
                         fb_abonnee_name: this.findNameInPB(lastData.remoteNumber),
                         fb_datetime: new Date().toLocaleString()
-                    }).catch(this.error).then(this.log);
+                    }).catch(this.error);
+                    Call=false;
                 }
-                Call=false;
                 result.duration = chunks[3];
-                fbCallDisconnectedTrigger.trigger({'fb_duration': result.duration}, null).catch(this.error).then(this.log);
+                this._flowTriggers['fb_disconnect_call'].trigger({'fb_duration': result.duration}, null).catch(this.error);
                 break;
         }
         return result;
@@ -199,7 +230,7 @@ class FBApp extends Homey.App {
 
 
     findNameInPB(number) {
-        var unknown = Homey.__('unknown');
+        var unknown = this.homey.__('unknown');
         if (phoneBook)
         {
             if (number in phoneBook)

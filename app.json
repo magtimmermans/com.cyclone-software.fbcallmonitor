@@ -1,189 +1,201 @@
 {
-    "id": "com.cyclone-software.fbcallmonitor",
-    "sdk": 2,
-    "name": {
-        "en": "FritzBox Call Monitor",
-        "nl": "FritzBox Telefoon Monitor"
-    },
-    "description": {
-        "en": "This app let's monitor incomming calls from your Fritz Box and monitors Fritz connected devices!",
-        "nl": "De app monitored je Fritz Box op inkomende oproepen en je monitored je gekoppelde Fritz apparaten."
-    },
-    "version": "0.2.4",
-    "compatibility": ">=2.0.0",
-    "brandColor": "#E8461D",
-    "contributing": {
-        "donate": {
-            "paypal": {
-                "username": "marceltimmermans"
-            }
-        }
-    },
-    "category": "internet",
-    "author": {
-        "name": "Marcel Timmermans",
-        "email": "marcel@timmermans.us"
-    },
-    "images": {
-        "large": "assets/images/large.jpg",
-        "small": "assets/images/small.jpg"
-    },
-    "permissions": [],
-    "flow": {
-        "triggers": [{
-                "id": "fb_incomming_call",
-                "title": {
-                    "en": "Incomming call",
-                    "nl": "Er komt een oproep binnen"
-                },
-                "tokens": [{
-                        "name": "fb_tel_nr",
-                        "type": "string",
-                        "title": {
-                            "en": "Telephone number",
-                            "nl": "Telefoon nummer"
-                        }
-                    },
-                    {
-                        "name": "fb_abonnee_name",
-                        "type": "string",
-                        "title": {
-                            "en": "Telephone Name",
-                            "nl": "Abonnee Naam"
-                        }
-                    },
-                    {
-                        "name": "fb_datetime",
-                        "type": "string",
-                        "title": {
-                            "en": "Date Time",
-                            "nl": "Datum Tijd"
-                        }
-                    }
-                ]
-            },
-            {"id": "fb_missed_call",
-            "title": {
-                "en": "Missed call",
-                "nl": "Gemiste oproep"
-            },
-            "tokens": [{
-                    "name": "fb_tel_nr",
-                    "type": "string",
-                    "title": {
-                        "en": "Telephone number",
-                        "nl": "Telefoon nummer"
-                    }
-                },
-                {
-                    "name": "fb_abonnee_name",
-                    "type": "string",
-                    "title": {
-                        "en": "Telephone Name",
-                        "nl": "Abonnee Naam"
-                    }
-                },
-                {
-                    "name": "fb_datetime",
-                    "type": "string",
-                    "title": {
-                        "en": "Date Time",
-                        "nl": "Datum Tijd"
-                    }
-                }
-            ]
-            },
-            {
-                "id": "fb_call_anwsered",
-                "title": {
-                    "en": "Call Anwsered",
-                    "nl": "U heeft opgenomen"
-                },
-                "tokens": [{
-                        "name": "fb_tel_nr",
-                        "type": "string",
-                        "title": {
-                            "en": "Telephone number",
-                            "nl": "Telefoon nummer"
-                        }
-                    },
-                    {
-                        "name": "fb_abonnee_name",
-                        "type": "string",
-                        "title": {
-                            "en": "Telephone Name",
-                            "nl": "Abonnee Naam"
-                        }
-                    },
-                    {
-                        "name": "fb_datetime",
-                        "type": "string",
-                        "title": {
-                            "en": "Date Time",
-                            "nl": "Datum Tijd"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "fb_call",
-                "title": {
-                    "en": "Outgoing Call",
-                    "nl": "U belt uit"
-                },
-                "tokens": [{
-                        "name": "fb_tel_nr",
-                        "title": {
-                            "en": "Telephone number",
-                            "nl": "Telefoon nummer"
-                        }
-                    },
-                    {
-                        "name": "fb_abonnee_name",
-                        "title": {
-                            "en": "Telephone Name",
-                            "nl": "Abonnee Naam"
-                        }
-                    },
-                    {
-                        "name": "fb_datetime",
-                        "title": {
-                            "en": "Date Time",
-                            "nl": "Datum Tijd"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "fb_disconnect_call",
-                "title": {
-                    "en": "Call ended",
-                    "nl": "Oproep is beeindigd"
-                },
-                "tokens": [{
-                    "name": "fb_duration",
-                    "type": "string",
-                    "title": {
-                        "en": "Duration",
-                        "nl": "tijd"
-                    }
-                }]
-            }
-        ],
-        "conditions": [{
-            "id": "TelNumber",
-            "title": {
-                "en": "Telephone number !{{is|isn't}} ",
-                "nl": "Telefoon nummer !{{is|is niet}}"
-            },
-            "args": [{
-                "name": "telnr",
-                "type": "text",
-                "placeholder": {
-                    "en": "Telephone number",
-                    "nl": "Telefoon nummer"
-                }
-            }]
-        }]
+  "id": "com.cyclone-software.fbcallmonitor",
+  "sdk": 3,
+  "name": {
+    "en": "FritzBox Call Monitor",
+    "nl": "FritzBox Telefoon Monitor"
+  },
+  "description": {
+    "en": "This app let's monitor incomming calls from your Fritz Box and monitors Fritz connected devices!",
+    "nl": "De app monitored je Fritz Box op inkomende oproepen en je monitored je gekoppelde Fritz apparaten."
+  },
+  "version": "0.3.1",
+  "compatibility": ">=5.0.0",
+  "brandColor": "#E8461D",
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "marceltimmermans"
+      }
     }
+  },
+  "category": "internet",
+  "author": {
+    "name": "Marcel Timmermans",
+    "email": "marcel@timmermans.us"
+  },
+  "images": {
+    "large": "assets/images/large.jpg",
+    "small": "assets/images/small.jpg"
+  },
+  "permissions": [],
+  "flow": {
+    "triggers": [
+      {
+        "id": "fb_incomming_call",
+        "title": {
+          "en": "Incomming call",
+          "nl": "Er komt een oproep binnen"
+        },
+        "tokens": [
+          {
+            "name": "fb_tel_nr",
+            "type": "string",
+            "title": {
+              "en": "Telephone number",
+              "nl": "Telefoon nummer"
+            }
+          },
+          {
+            "name": "fb_abonnee_name",
+            "type": "string",
+            "title": {
+              "en": "Telephone Name",
+              "nl": "Abonnee Naam"
+            }
+          },
+          {
+            "name": "fb_datetime",
+            "type": "string",
+            "title": {
+              "en": "Date Time",
+              "nl": "Datum Tijd"
+            }
+          }
+        ]
+      },
+      {
+        "id": "fb_missed_call",
+        "title": {
+          "en": "Missed call",
+          "nl": "Gemiste oproep"
+        },
+        "tokens": [
+          {
+            "name": "fb_tel_nr",
+            "type": "string",
+            "title": {
+              "en": "Telephone number",
+              "nl": "Telefoon nummer"
+            }
+          },
+          {
+            "name": "fb_abonnee_name",
+            "type": "string",
+            "title": {
+              "en": "Telephone Name",
+              "nl": "Abonnee Naam"
+            }
+          },
+          {
+            "name": "fb_datetime",
+            "type": "string",
+            "title": {
+              "en": "Date Time",
+              "nl": "Datum Tijd"
+            }
+          }
+        ]
+      },
+      {
+        "id": "fb_call_anwsered",
+        "title": {
+          "en": "Call Anwsered",
+          "nl": "U heeft opgenomen"
+        },
+        "tokens": [
+          {
+            "name": "fb_tel_nr",
+            "type": "string",
+            "title": {
+              "en": "Telephone number",
+              "nl": "Telefoon nummer"
+            }
+          },
+          {
+            "name": "fb_abonnee_name",
+            "type": "string",
+            "title": {
+              "en": "Telephone Name",
+              "nl": "Abonnee Naam"
+            }
+          },
+          {
+            "name": "fb_datetime",
+            "type": "string",
+            "title": {
+              "en": "Date Time",
+              "nl": "Datum Tijd"
+            }
+          }
+        ]
+      },
+      {
+        "id": "fb_call",
+        "title": {
+          "en": "Outgoing Call",
+          "nl": "U belt uit"
+        },
+        "tokens": [
+          {
+            "name": "fb_tel_nr",
+            "title": {
+              "en": "Telephone number",
+              "nl": "Telefoon nummer"
+            }
+          },
+          {
+            "name": "fb_abonnee_name",
+            "title": {
+              "en": "Telephone Name",
+              "nl": "Abonnee Naam"
+            }
+          },
+          {
+            "name": "fb_datetime",
+            "title": {
+              "en": "Date Time",
+              "nl": "Datum Tijd"
+            }
+          }
+        ]
+      },
+      {
+        "id": "fb_disconnect_call",
+        "title": {
+          "en": "Call ended",
+          "nl": "Oproep is beeindigd"
+        },
+        "tokens": [
+          {
+            "name": "fb_duration",
+            "type": "string",
+            "title": {
+              "en": "Duration",
+              "nl": "tijd"
+            }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "TelNumber",
+        "title": {
+          "en": "Telephone number !{{is|isn't}} ",
+          "nl": "Telefoon nummer !{{is|is niet}}"
+        },
+        "args": [
+          {
+            "name": "telnr",
+            "type": "text",
+            "placeholder": {
+              "en": "Telephone number",
+              "nl": "Telefoon nummer"
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

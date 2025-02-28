@@ -1,0 +1,5 @@
+{
+  "0.3.1": {
+    "en": "Updated to SDK 3, could break existing flows. Not tested as I do not have a FB anymore!!!"
+  }
+}
