@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "fixture-stdout": "^0.2.1",
+    "net-socket": "^1.1.0",
+    "xml2js": "^0.6.2"
+  }
+}

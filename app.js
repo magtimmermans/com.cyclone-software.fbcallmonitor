@@ -1,6 +1,7 @@
 "use strict"
-const net 			= require('net');
-const Homey         = require('homey');
+const net 	= require('net');
+const Homey = require('homey');
+const Logger = require('./captureLogs.js');
 
 var host = 'fritz.box'; // ipaddress | 'fritz.box'
 var port = 1012;
@@ -10,8 +11,6 @@ var phoneBook = [];
 var Call = false;
 
 
-
-
 class FBApp extends Homey.App {
     /*
     #96*5* – Callmonitor inschakelen
@@ -19,6 +18,8 @@ class FBApp extends Homey.App {
     */
     onInit() {
 
+        this.logger = new Logger({ name: 'log', length: 200, homey: this.homey });
+        
         this.log(`${this.homey.manifest.id} V${this.homey.manifest.version} is running...`);
 
         this._flowTriggers = [];
@@ -76,7 +77,7 @@ class FBApp extends Homey.App {
         host = this.homey.settings.get('fritz_host');  //Homey.manager('settings').get('fritz_host');
         port = this.homey.settings.get('fritz_port');  //Homey.manager('settings').get('fritz_port');
         
-        this.log("Init Socket");
+        this.log(`Init Socket ${host} ${port}`);
 
         if (port) {
             socket = new net.Socket();
@@ -268,7 +269,7 @@ class FBApp extends Homey.App {
         } else if (err.code === 'EHOSTUNREACH') {
             this.error('Host ' + host + ' not found.');
         } else {
-            this.error(err.code);
+            this.error(`Found error: ${err.code}`);
         }
     }
 
@@ -279,6 +280,14 @@ class FBApp extends Homey.App {
             socket = null;
         }
     }
+
+    deleteLogs() {
+		return this.logger.deleteLogs();
+	}
+
+	getLogs() {
+		return this.logger.logArray;
+	}
 
 }
 
