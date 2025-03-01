@@ -4,5 +4,8 @@
   },
   "0.3.2": {
     "en": "Added logging in settings screen"
+  },
+  "0.3.3": {
+    "en": "Some small bug fixes"
   }
 }

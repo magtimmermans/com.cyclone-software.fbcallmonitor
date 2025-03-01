@@ -9,6 +9,7 @@ var lastData = null;
 var socket = null;
 var phoneBook = [];
 var Call = false;
+var self;
 
 
 class FBApp extends Homey.App {
@@ -79,6 +80,8 @@ class FBApp extends Homey.App {
         
         this.log(`Init Socket ${host} ${port}`);
 
+        self=this;
+
         if (port) {
             socket = new net.Socket();
             socket.connect(port, host);
@@ -88,8 +91,8 @@ class FBApp extends Homey.App {
             socket.on('error', this.handleError.bind(this));
 
             socket.on('close', function() {   // Try to reconnect after 30s
-                setTimeout(function() { this.onInit(); }, 30000 );
-                console.log('Connection Closed');
+                setTimeout(function() { self.onInit(); }, 30000 );
+                self.log('Connection Closed');
               });
 
             process.on('SIGINT', this.closeSocket);
@@ -116,8 +119,8 @@ class FBApp extends Homey.App {
 
                 //Get update settings
             this.homey.settings.on('set', (key) => {
-                    console.log('Update Settings:');    
-                    console.log(key);
+                    self.log('Update Settings:');    
+                    self.log(key);
 
                     // Don't reload when it is the fritzbox settings from the devices
                     // if(name.indexOf("fritzbox_settings_") > -1)
@@ -126,7 +129,7 @@ class FBApp extends Homey.App {
                     // }
 
                     closeSocket()
-                    onInit();
+                    self.onInit();
             });
 
             this.homey.on('unload', function() {
