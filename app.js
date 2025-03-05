@@ -218,7 +218,7 @@ class FBApp extends Homey.App {
                 if (Call) {
                     // missed call
                     this.log('missed call');
-                    fbMissedCallTrigger.trigger({
+                    this._flowTriggers['fb_missed_call'].trigger({
                         fb_tel_nr: lastData.remoteNumber,
                         fb_abonnee_name: this.findNameInPB(lastData.remoteNumber),
                         fb_datetime: new Date().toLocaleString()
