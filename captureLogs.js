@@ -19,7 +19,7 @@ class captureLogs {
 		this.logLength = opts.length || 50;
 		this.logFile = `/userdata/${this.logName}.json`;
 		this.logArray = [];
-		this.getLogs();
+		//this.getLogs();
 		this.captureStdOut();
 		this.captureStdErr();
 		// this.homey.log('capture is ready :)');

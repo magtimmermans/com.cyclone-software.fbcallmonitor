@@ -264,15 +264,15 @@ class FBApp extends Homey.App {
 
     handleError(err) {
         // Catch some errors
-        this.error('Could not connect to ' + host);
+        this.log('Could not connect to ' + host);
         if (err.code === 'ECONNREFUSED') {
-            this.error('Is the CallMonitor enabled?');
+            this.log('Is the CallMonitor enabled?');
         } else if (err.code === 'ENOTFOUND') {
-            this.error('Host ' + host + ' not found.');
+            this.log('Host ' + host + ' not found.');
         } else if (err.code === 'EHOSTUNREACH') {
-            this.error('Host ' + host + ' not found.');
+            this.log('Host ' + host + ' not found.');
         } else {
-            this.error(`Found error: ${err.code}`);
+            this.log(`Found error: ${err.code}`);
         }
     }
 
